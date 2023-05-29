@@ -1,10 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseConfig } from './database.interface';
 import { ConfigService } from '@nestjs/config';
+import { JWTConfig } from '../jwt/jwt.interface';
 
 @Injectable()
-export class EnvironmentConfigService implements DatabaseConfig {
+export class EnvironmentConfigService implements DatabaseConfig, JWTConfig {
   constructor(private configService: ConfigService) {}
+  getJwtRefreshSecret(): string {
+    return this.configService.get<string>('JWT_REFREH_SECRET');
+  }
+  getJwtSecret(): string {
+    return this.configService.get<string>('JWT_SECRET');
+  }
+  getJwtExpirationTime(): string {
+    return this.configService.get<string>('JWT_EXP_TIME');
+  }
+  getJwtRefreshExpirationTime(): string {
+    return this.configService.get<string>('JWT_REFRESH_EXP_TIME');
+  }
 
   getDatabaseHost(): string {
     return this.configService.get<string>('DATABASE_HOST');

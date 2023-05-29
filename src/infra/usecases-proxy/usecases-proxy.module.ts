@@ -3,12 +3,23 @@ import { ExceptionsModule } from '../exceptions/exceptions.module';
 import { LoggerModule } from '../logger/logger.module';
 import { LoggerService } from '../logger/logger.service';
 import { RepositoriesModule } from '../repositories/repositories.module';
-import { TodoRepository } from '../repositories/todo.repository';
+import { TodoRepository } from '../repositories/todo/todo.repository';
+
+import { UseCaseProxy } from './usecases-proxy';
+import { addTodoUseCases } from '../../domain/useCases/todo/addTodo.usecase';
+import { deleteTodoUseCases } from '../../domain/useCases/todo/deleteTodo.usecase';
+import { GetTodoUseCases } from '../../domain/useCases/todo/getTodo.usecase';
+import { getTodosUseCases } from '../../domain/useCases/todo/getTodos.usecase';
+import { updateTodoUseCases } from '../../domain/useCases/todo/updateTodo.usecase';
 
 @Module({
   imports: [LoggerModule, RepositoriesModule, ExceptionsModule],
 })
 export class UsecasesProxyModule {
+  static LOGIN_USECASES_PROXY = 'LoginUseCasesProxy';
+  static IS_AUTHENTICATED_USECASES_PROXY = 'IsAuthenticatedUseCasesProxy';
+  static LOGOUT_USECASES_PROXY = 'LogoutUseCasesProxy';
+
   static GET_TODO_USECASES_PROXY = 'getTodoUsecasesProxy';
   static GET_TODOS_USECASES_PROXY = 'getTodosUsecasesProxy';
   static POST_TODO_USECASES_PROXY = 'postTodoUsecasesProxy';
