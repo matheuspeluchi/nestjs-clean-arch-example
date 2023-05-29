@@ -3,14 +3,14 @@ import { ExceptionsModule } from '../exceptions/exceptions.module';
 import { LoggerModule } from '../logger/logger.module';
 import { LoggerService } from '../logger/logger.service';
 import { RepositoriesModule } from '../repositories/repositories.module';
-import { TodoRepository } from '../repositories/todo/todo.repository';
 
 import { UseCaseProxy } from './usecases-proxy';
-import { addTodoUseCases } from '../../domain/useCases/todo/addTodo.usecase';
-import { deleteTodoUseCases } from '../../domain/useCases/todo/deleteTodo.usecase';
+import { AddTodoUseCases } from '../../domain/useCases/todo/addTodo.usecase';
+import { DeleteTodoUseCases } from '../../domain/useCases/todo/deleteTodo.usecase';
 import { GetTodoUseCases } from '../../domain/useCases/todo/getTodo.usecase';
-import { getTodosUseCases } from '../../domain/useCases/todo/getTodos.usecase';
-import { updateTodoUseCases } from '../../domain/useCases/todo/updateTodo.usecase';
+import { ListTodosUseCases } from '../../domain/useCases/todo/listTodos.usecase';
+import { UpdateTodoUseCases } from '../../domain/useCases/todo/updateTodo.usecase';
+import { TodoRepository } from '../repositories/todo/todoRepository.interface';
 
 @Module({
   imports: [LoggerModule, RepositoriesModule, ExceptionsModule],
@@ -30,6 +30,7 @@ export class UsecasesProxyModule {
     return {
       module: UsecasesProxyModule,
       providers: [
+        LoggerService,
         {
           inject: [TodoRepository],
           provide: UsecasesProxyModule.GET_TODO_USECASES_PROXY,
@@ -40,25 +41,25 @@ export class UsecasesProxyModule {
           inject: [TodoRepository],
           provide: UsecasesProxyModule.GET_TODOS_USECASES_PROXY,
           useFactory: (todoRepository: TodoRepository) =>
-            new UseCaseProxy(new getTodosUseCases(todoRepository)),
+            new UseCaseProxy(new ListTodosUseCases(todoRepository)),
         },
         {
           inject: [LoggerService, TodoRepository],
           provide: UsecasesProxyModule.POST_TODO_USECASES_PROXY,
           useFactory: (logger: LoggerService, todoRepository: TodoRepository) =>
-            new UseCaseProxy(new addTodoUseCases(logger, todoRepository)),
+            new UseCaseProxy(new AddTodoUseCases(logger, todoRepository)),
         },
         {
           inject: [LoggerService, TodoRepository],
           provide: UsecasesProxyModule.PUT_TODO_USECASES_PROXY,
           useFactory: (logger: LoggerService, todoRepository: TodoRepository) =>
-            new UseCaseProxy(new updateTodoUseCases(logger, todoRepository)),
+            new UseCaseProxy(new UpdateTodoUseCases(logger, todoRepository)),
         },
         {
           inject: [LoggerService, TodoRepository],
           provide: UsecasesProxyModule.DELETE_TODO_USECASES_PROXY,
           useFactory: (logger: LoggerService, todoRepository: TodoRepository) =>
-            new UseCaseProxy(new deleteTodoUseCases(logger, todoRepository)),
+            new UseCaseProxy(new DeleteTodoUseCases(logger, todoRepository)),
         },
       ],
       exports: [

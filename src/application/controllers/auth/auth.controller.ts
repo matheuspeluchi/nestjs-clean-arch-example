@@ -17,8 +17,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AuthLoginDto } from './auth-dto.class';
-import { IsAuthPresenter } from './auth.presenter';
+import { AuthLoginDto } from './dto/auth-dto.class';
+import { IsAuthPresenter } from '../../presenters/auth/auth.presenter';
 import { UsecasesProxyModule } from '../../../infra/usecases-proxy/usecases-proxy.module';
 
 import { UseCaseProxy } from '../../../infra/usecases-proxy/usecases-proxy';
@@ -40,12 +40,9 @@ import { LogoutUseCases } from '../../../domain/useCases/auth/logout.usecases';
 @ApiExtraModels(IsAuthPresenter)
 export class AuthController {
   constructor(
-    @Inject(UsecasesProxyModule.LOGIN_USECASES_PROXY)
-    private readonly loginUsecaseProxy: UseCaseProxy<LoginUseCases>,
-    @Inject(UsecasesProxyModule.LOGOUT_USECASES_PROXY)
-    private readonly logoutUsecaseProxy: UseCaseProxy<LogoutUseCases>,
-    @Inject(UsecasesProxyModule.IS_AUTHENTICATED_USECASES_PROXY)
-    private readonly isAuthUsecaseProxy: UseCaseProxy<IsAuthenticatedUseCases>,
+    private readonly loginUsecaseProxy: LoginUseCases,
+    private readonly logoutUsecaseProxy: LogoutUseCases,
+    private readonly isAuthUsecaseProxy: IsAuthenticatedUseCases,
   ) {}
 
   @Post('login')
@@ -54,12 +51,10 @@ export class AuthController {
   @ApiBody({ type: AuthLoginDto })
   @ApiOperation({ description: 'login' })
   async login(@Body() auth: AuthLoginDto, @Request() request: any) {
-    const accessTokenCookie = await this.loginUsecaseProxy
-      .getInstance()
-      .getCookieWithJwtToken(auth.username);
-    const refreshTokenCookie = await this.loginUsecaseProxy
-      .getInstance()
-      .getCookieWithJwtRefreshToken(auth.username);
+    const accessTokenCookie =
+      await this.loginUsecaseProxy.getCookieWithJwtToken(auth.username);
+    const refreshTokenCookie =
+      await this.loginUsecaseProxy.getCookieWithJwtRefreshToken(auth.username);
     request.res.setHeader('Set-Cookie', [
       accessTokenCookie,
       refreshTokenCookie,
@@ -71,7 +66,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'logout' })
   async logout(@Request() request: any) {
-    const cookie = await this.logoutUsecaseProxy.getInstance().execute();
+    const cookie = await this.logoutUsecaseProxy.execute();
     request.res.setHeader('Set-Cookie', cookie);
     return 'Logout successful';
   }
@@ -82,9 +77,7 @@ export class AuthController {
   @ApiOperation({ description: 'is_authenticated' })
   @ApiResponseType(IsAuthPresenter, false)
   async isAuthenticated(@Req() request: any) {
-    const user = await this.isAuthUsecaseProxy
-      .getInstance()
-      .execute(request.user.username);
+    const user = await this.isAuthUsecaseProxy.execute(request.user.username);
     const response = new IsAuthPresenter();
     response.username = user.username;
     return response;
@@ -94,9 +87,8 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @ApiBearerAuth()
   async refresh(@Req() request: any) {
-    const accessTokenCookie = await this.loginUsecaseProxy
-      .getInstance()
-      .getCookieWithJwtToken(request.user.username);
+    const accessTokenCookie =
+      await this.loginUsecaseProxy.getCookieWithJwtToken(request.user.username);
     request.res.setHeader('Set-Cookie', accessTokenCookie);
     return 'Refresh successful';
   }

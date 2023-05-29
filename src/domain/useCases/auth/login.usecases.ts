@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { IBcryptService } from '../../../infra/adapters/bcrypt.interface';
 import {
   IJwtService,
@@ -5,14 +6,15 @@ import {
 } from '../../../infra/adapters/jwt.interface';
 import { JWTConfig } from '../../../infra/config/jwt/jwt.interface';
 import { ILogger } from '../../../infra/logger/logger.interface';
-import { IUserRepository } from '../../../infra/repositories/user/userRepository.interface';
+import { UserRepository } from '../../../infra/repositories/user/userRepository.interface';
 
+@Injectable()
 export class LoginUseCases {
   constructor(
     private readonly logger: ILogger,
     private readonly jwtTokenService: IJwtService,
     private readonly jwtConfig: JWTConfig,
-    private readonly userRepository: IUserRepository,
+    private readonly userRepository: UserRepository,
     private readonly bcryptService: IBcryptService,
   ) {}
 

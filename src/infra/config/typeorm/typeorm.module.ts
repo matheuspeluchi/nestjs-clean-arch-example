@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { EnvironmentConfigService } from '../environment-config/environment-config.service';
+import { EnvironmentConfigModule } from '../environment-config/environment-config.module';
 
 export const getTypeOrmModuleOptions = (
   config: EnvironmentConfigService,
@@ -23,7 +24,7 @@ export const getTypeOrmModuleOptions = (
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      imports: [EnvironmentConfigService],
+      imports: [EnvironmentConfigModule],
       inject: [EnvironmentConfigService],
       useFactory: getTypeOrmModuleOptions,
     }),

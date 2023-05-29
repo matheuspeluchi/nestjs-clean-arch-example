@@ -2,15 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserModel } from '../models/user.model';
-import { IUserRepository } from './userRepository.interface';
+import { UserRepository } from './userRepository.interface';
 import { User } from '../../../domain/entities/user.entity';
 
 @Injectable()
-export class UserRepository implements IUserRepository {
+export class DatabaseUserRepository extends UserRepository {
   constructor(
     @InjectRepository(User)
     private readonly userEntityRepository: Repository<User>,
-  ) {}
+  ) {
+    super();
+  }
   async updateRefreshToken(
     username: string,
     refreshToken: string,

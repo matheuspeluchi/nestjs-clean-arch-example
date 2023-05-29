@@ -1,8 +1,6 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable } from '@nestjs/common';
-import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
-import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 import { LoggerService } from '../../logger/logger.service';
 import { ExceptionsService } from '../../exceptions/exceptions.service';
 import { LoginUseCases } from '../../../domain/useCases/auth/login.usecases';
@@ -10,8 +8,7 @@ import { LoginUseCases } from '../../../domain/useCases/auth/login.usecases';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @Inject(UsecasesProxyModule.LOGIN_USECASES_PROXY)
-    private readonly loginUsecaseProxy: UseCaseProxy<LoginUseCases>,
+    private readonly loginUsecaseProxy: LoginUseCases,
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
   ) {
@@ -26,9 +23,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       );
       this.exceptionService.UnauthorizedException();
     }
-    const user = await this.loginUsecaseProxy
-      .getInstance()
-      .validateUserForLocalStragtegy(username, password);
+    const user = await this.loginUsecaseProxy.validateUserForLocalStragtegy(
+      username,
+      password,
+    );
     if (!user) {
       this.logger.warn('LocalStrategy', `Invalid username or password`);
       this.exceptionService.UnauthorizedException({

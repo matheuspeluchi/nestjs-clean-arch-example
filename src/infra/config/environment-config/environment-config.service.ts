@@ -6,17 +6,18 @@ import { JWTConfig } from '../jwt/jwt.interface';
 @Injectable()
 export class EnvironmentConfigService implements DatabaseConfig, JWTConfig {
   constructor(private configService: ConfigService) {}
+
   getJwtRefreshSecret(): string {
-    return this.configService.get<string>('JWT_REFREH_SECRET');
+    return this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET');
   }
   getJwtSecret(): string {
     return this.configService.get<string>('JWT_SECRET');
   }
   getJwtExpirationTime(): string {
-    return this.configService.get<string>('JWT_EXP_TIME');
+    return this.configService.get<string>('JWT_EXPIRATION_TIME');
   }
   getJwtRefreshExpirationTime(): string {
-    return this.configService.get<string>('JWT_REFRESH_EXP_TIME');
+    return this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME');
   }
 
   getDatabaseHost(): string {

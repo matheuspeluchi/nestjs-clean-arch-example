@@ -7,7 +7,6 @@ import { BcryptModule } from './infra/services/bcrypt/bcrypt.module';
 import { JwtStrategy } from './infra/common/strategies/jwt.strategy';
 import { JwtRefreshTokenStrategy } from './infra/common/strategies/jwtRefresh.strategy';
 import { LocalStrategy } from './infra/common/strategies/local.strategy';
-import { UsecasesProxyModule } from './infra/usecases-proxy/usecases-proxy.module';
 import { ControllersModule } from './application/controllers/controllers.module';
 import { JwtModule as JwtServiceModule } from './infra/services/jwt/jwt.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -20,7 +19,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     LoggerModule,
     ExceptionsModule,
-    UsecasesProxyModule.register(),
     ControllersModule,
     BcryptModule,
     JwtServiceModule,

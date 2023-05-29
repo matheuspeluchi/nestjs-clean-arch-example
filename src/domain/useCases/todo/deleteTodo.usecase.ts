@@ -1,10 +1,12 @@
-import { ILogger } from '../../../infra/logger/logger.interface';
-import { ITodoRepository } from '../../../infra/repositories/todo/todoRepository.interface';
-
-export class deleteTodoUseCases {
+import { Injectable } from '@nestjs/common';
+import { TodoRepository } from '../../../infra/repositories/todo/todoRepository.interface';
+import { Usecase } from '../UseCase.interface';
+import { LoggerService } from '../../../infra/logger/logger.service';
+@Injectable()
+export class DeleteTodoUseCases implements Usecase {
   constructor(
-    private readonly logger: ILogger,
-    private readonly todoRepository: ITodoRepository,
+    private readonly logger: LoggerService,
+    private readonly todoRepository: TodoRepository,
   ) {}
 
   async execute(id: number): Promise<void> {
