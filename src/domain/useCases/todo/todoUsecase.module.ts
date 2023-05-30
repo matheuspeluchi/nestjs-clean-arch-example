@@ -6,7 +6,6 @@ import { GetTodoUseCases } from './getTodo.usecase';
 import { UpdateTodoUseCases } from './updateTodo.usecase';
 import { RepositoriesModule } from '../../../infra/repositories/repositories.module';
 import { LoggerModule } from '../../../infra/logger/logger.module';
-import { LoggerService } from '../../../infra/logger/logger.service';
 
 @Module({
   imports: [RepositoriesModule, LoggerModule],

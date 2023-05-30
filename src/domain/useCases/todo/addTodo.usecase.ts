@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TodoModel } from '../../../infra/repositories/models/todo.model';
+import { TodoModel } from '../../models/todo.model';
 import { TodoRepository } from '../../../infra/repositories/todo/todoRepository.interface';
 import { Usecase } from '../UseCase.interface';
 import { LoggerService } from '../../../infra/logger/logger.service';

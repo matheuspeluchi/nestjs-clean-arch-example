@@ -1,4 +1,4 @@
-export class LogoutUseCases {
+export class LogoutUseCase {
   async execute(): Promise<string[]> {
     return [
       'Authentication=; HttpOnly; Path=/; Max-Age=0',

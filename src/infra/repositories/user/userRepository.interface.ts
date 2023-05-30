@@ -1,4 +1,4 @@
-import { UserModel } from '../models/user.model';
+import { UserModel } from '../../../domain/models/user.model';
 
 export abstract class UserRepository {
   abstract getUserByUsername(username: string): Promise<UserModel>;

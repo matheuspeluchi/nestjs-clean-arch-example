@@ -2,9 +2,9 @@ export interface IJwtServicePayload {
   username: string;
 }
 
-export interface IJwtService {
-  checkToken(token: string): Promise<any>;
-  createToken(
+export abstract class JwtService {
+  abstract checkToken(token: string): Promise<any>;
+  abstract createToken(
     payload: IJwtServicePayload,
     secret: string,
     expiresIn: string,

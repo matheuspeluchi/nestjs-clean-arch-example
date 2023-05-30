@@ -1,14 +1,14 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { LoggerService } from '../../logger/logger.service';
 import { ExceptionsService } from '../../exceptions/exceptions.service';
-import { LoginUseCases } from '../../../domain/useCases/auth/login.usecases';
+import { LoginUseCase } from '../../../domain/useCases/auth/login.usecases';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly loginUsecaseProxy: LoginUseCases,
+    private readonly loginUsecase: LoginUseCase,
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
   ) {
@@ -23,7 +23,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       );
       this.exceptionService.UnauthorizedException();
     }
-    const user = await this.loginUsecaseProxy.validateUserForLocalStragtegy(
+    const user = await this.loginUsecase.validateUserForLocalStragtegy(
       username,
       password,
     );

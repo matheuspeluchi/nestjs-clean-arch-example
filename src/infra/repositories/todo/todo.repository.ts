@@ -2,15 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoRepository } from './todoRepository.interface';
-import { Todo } from '../../../domain/entities/todo.entity';
-import { TodoModel } from '../models/todo.model';
+import { Todo } from '../entities/todo.entity';
+import { TodoModel } from '../../../domain/models/todo.model';
 
 @Injectable()
-export class DatabaseTodoRepository implements TodoRepository {
+export class DatabaseTodoRepository extends TodoRepository {
   constructor(
     @InjectRepository(Todo)
     private readonly todoEntityRepository: Repository<Todo>,
-  ) {}
+  ) {
+    super();
+  }
 
   async updateContent(id: number, isDone: boolean): Promise<void> {
     await this.todoEntityRepository.update(

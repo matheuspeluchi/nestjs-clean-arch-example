@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   Post,
   Req,
   Request,
@@ -19,16 +18,14 @@ import {
 
 import { AuthLoginDto } from './dto/auth-dto.class';
 import { IsAuthPresenter } from '../../presenters/auth/auth.presenter';
-import { UsecasesProxyModule } from '../../../infra/usecases-proxy/usecases-proxy.module';
 
-import { UseCaseProxy } from '../../../infra/usecases-proxy/usecases-proxy';
 import { JwtAuthGuard } from '../../../infra/common/guards/jwtAuth.guard';
 import JwtRefreshGuard from '../../../infra/common/guards/jwtRefresh.guard';
 import { LoginGuard } from '../../../infra/common/guards/login.guard';
 import { ApiResponseType } from '../../../infra/common/swagger/response.decorator';
-import { IsAuthenticatedUseCases } from '../../../domain/useCases/auth/isAuthenticated.usecases';
-import { LoginUseCases } from '../../../domain/useCases/auth/login.usecases';
-import { LogoutUseCases } from '../../../domain/useCases/auth/logout.usecases';
+import { IsAuthenticatedUseCase } from '../../../domain/useCases/auth/isAuthenticated.usecases';
+import { LoginUseCase } from '../../../domain/useCases/auth/login.usecases';
+import { LogoutUseCase } from '../../../domain/useCases/auth/logout.usecases';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -40,9 +37,9 @@ import { LogoutUseCases } from '../../../domain/useCases/auth/logout.usecases';
 @ApiExtraModels(IsAuthPresenter)
 export class AuthController {
   constructor(
-    private readonly loginUsecaseProxy: LoginUseCases,
-    private readonly logoutUsecaseProxy: LogoutUseCases,
-    private readonly isAuthUsecaseProxy: IsAuthenticatedUseCases,
+    private readonly loginUsecaseProxy: LoginUseCase,
+    private readonly logoutUsecaseProxy: LogoutUseCase,
+    private readonly isAuthUsecaseProxy: IsAuthenticatedUseCase,
   ) {}
 
   @Post('login')

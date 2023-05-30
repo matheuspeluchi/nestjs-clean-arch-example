@@ -1,18 +1,18 @@
-import { IBcryptService } from '../../../../infra/adapters/bcrypt.interface';
+import { IBcryptService } from '../../../../infra/adapters/encryption.interface';
 import { IJwtService } from '../../../../infra/adapters/jwt.interface';
 import { JWTConfig } from '../../../../infra/config/jwt/jwt.interface';
 import { IException } from '../../../../infra/exceptions/exceptions.interface';
 import { ILogger } from '../../../../infra/logger/logger.interface';
-import { UserModel } from '../../../../infra/repositories/models/user.model';
+import { UserModel } from '../../../models/user.model';
 import { UserRepository } from '../../../../infra/repositories/user/user.repository';
-import { IsAuthenticatedUseCases } from '../isAuthenticated.usecases';
-import { LoginUseCases } from '../login.usecases';
-import { LogoutUseCases } from '../logout.usecases';
+import { IsAuthenticatedUseCase } from '../isAuthenticated.usecases';
+import { LoginUseCase } from '../login.usecases';
+import { LogoutUseCase } from '../logout.usecases';
 
 describe('uses_cases/authentication', () => {
-  let loginUseCases: LoginUseCases;
-  let logoutUseCases: LogoutUseCases;
-  let isAuthenticated: IsAuthenticatedUseCases;
+  let loginUseCases: LoginUseCase;
+  let logoutUseCases: LogoutUseCase;
+  let isAuthenticated: IsAuthenticatedUseCase;
   let logger: ILogger;
   let exception: IException;
   let jwtService: IJwtService;
@@ -44,15 +44,15 @@ describe('uses_cases/authentication', () => {
     bcryptService.compare = jest.fn();
     bcryptService.hash = jest.fn();
 
-    loginUseCases = new LoginUseCases(
+    loginUseCases = new LoginUseCase(
       logger,
       jwtService,
       jwtConfig,
       adminUserRepo,
       bcryptService,
     );
-    logoutUseCases = new LogoutUseCases();
-    isAuthenticated = new IsAuthenticatedUseCases(adminUserRepo);
+    logoutUseCases = new LogoutUseCase();
+    isAuthenticated = new IsAuthenticatedUseCase(adminUserRepo);
   });
 
   describe('creating a cookie', () => {

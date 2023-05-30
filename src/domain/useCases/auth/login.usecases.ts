@@ -1,46 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { IBcryptService } from '../../../infra/adapters/bcrypt.interface';
+import { EncryptionService } from '../../../infra/adapters/encryption.interface';
 import {
-  IJwtService,
   IJwtServicePayload,
+  JwtService,
 } from '../../../infra/adapters/jwt.interface';
-import { JWTConfig } from '../../../infra/config/jwt/jwt.interface';
-import { ILogger } from '../../../infra/logger/logger.interface';
 import { UserRepository } from '../../../infra/repositories/user/userRepository.interface';
+import { LoggerService } from '../../../infra/logger/logger.service';
+import { EnvironmentConfigService } from '../../../infra/config/environment-config/environment-config.service';
 
 @Injectable()
-export class LoginUseCases {
+export class LoginUseCase {
   constructor(
-    private readonly logger: ILogger,
-    private readonly jwtTokenService: IJwtService,
-    private readonly jwtConfig: JWTConfig,
+    private readonly logger: LoggerService,
+    private readonly jwtTokenService: JwtService,
+    private readonly configService: EnvironmentConfigService,
     private readonly userRepository: UserRepository,
-    private readonly bcryptService: IBcryptService,
+    private readonly bcryptService: EncryptionService,
   ) {}
 
   async getCookieWithJwtToken(username: string) {
     this.logger.log(
-      'LoginUseCases execute',
+      'LoginUseCase execute',
       `The user ${username} have been logged.`,
     );
     const payload: IJwtServicePayload = { username: username };
-    const secret = this.jwtConfig.getJwtSecret();
-    const expiresIn = this.jwtConfig.getJwtExpirationTime() + 's';
+    const secret = this.configService.getJwtSecret();
+    const expiresIn = this.configService.getJwtExpirationTime() + 's';
     const token = this.jwtTokenService.createToken(payload, secret, expiresIn);
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.jwtConfig.getJwtExpirationTime()}`;
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.getJwtExpirationTime()}`;
   }
 
   async getCookieWithJwtRefreshToken(username: string) {
     this.logger.log(
-      'LoginUseCases execute',
+      'LoginUseCase execute',
       `The user ${username} have been logged.`,
     );
     const payload: IJwtServicePayload = { username: username };
-    const secret = this.jwtConfig.getJwtRefreshSecret();
-    const expiresIn = this.jwtConfig.getJwtRefreshExpirationTime() + 's';
+    const secret = this.configService.getJwtRefreshSecret();
+    const expiresIn = this.configService.getJwtRefreshExpirationTime() + 's';
     const token = this.jwtTokenService.createToken(payload, secret, expiresIn);
     await this.setCurrentRefreshToken(token, username);
-    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.jwtConfig.getJwtRefreshExpirationTime()}`;
+    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.configService.getJwtRefreshExpirationTime()}`;
     return cookie;
   }
 

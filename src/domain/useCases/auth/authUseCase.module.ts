@@ -1,15 +1,23 @@
 import { Module } from '@nestjs/common';
-import { IsAuthenticatedUseCases } from './isAuthenticated.usecases';
-import { LoginUseCases } from './login.usecases';
-import { LogoutUseCases } from './logout.usecases';
+import { IsAuthenticatedUseCase } from './isAuthenticated.usecases';
+import { LoginUseCase } from './login.usecases';
+import { LogoutUseCase } from './logout.usecases';
 import { LoggerModule } from '../../../infra/logger/logger.module';
-import { JwtModule } from '../../../infra/services/jwt/jwt.module';
 import { BcryptModule } from '../../../infra/services/bcrypt/bcrypt.module';
+import { EnvironmentConfigModule } from '../../../infra/config/environment-config/environment-config.module';
+import { RepositoriesModule } from '../../../infra/repositories/repositories.module';
+import { JwtModule } from '../../../infra/services/jwt/jwt.module';
 
 @Module({
-  imports: [LoggerModule, JwtModule, BcryptModule],
-  providers: [IsAuthenticatedUseCases, LoginUseCases, LogoutUseCases],
-  exports: [IsAuthenticatedUseCases, LoginUseCases, LogoutUseCases],
+  imports: [
+    LoggerModule,
+    JwtModule,
+    BcryptModule,
+    EnvironmentConfigModule,
+    RepositoriesModule,
+  ],
+  providers: [IsAuthenticatedUseCase, LoginUseCase, LogoutUseCase],
+  exports: [IsAuthenticatedUseCase, LoginUseCase, LogoutUseCase],
 })
 export class AuthUseCaseModule {}
 

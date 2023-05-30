@@ -10,9 +10,13 @@ import { LocalStrategy } from './infra/common/strategies/local.strategy';
 import { ControllersModule } from './application/controllers/controllers.module';
 import { JwtModule as JwtServiceModule } from './infra/services/jwt/jwt.module';
 import { JwtModule } from '@nestjs/jwt';
+import { StrategyModule } from './infra/common/strategies/strategies.module';
+import { AuthUseCaseModule } from './domain/useCases/auth/authUseCase.module';
 
 @Module({
   imports: [
+    StrategyModule,
+    AuthUseCaseModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.secret,

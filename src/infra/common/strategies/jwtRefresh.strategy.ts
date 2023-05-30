@@ -1,15 +1,13 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { EnvironmentConfigService } from '../../config/environment-config/environment-config.service';
-import { UsecasesProxyModule } from '../../usecases-proxy/usecases-proxy.module';
-import { UseCaseProxy } from '../../usecases-proxy/usecases-proxy';
 
 import { LoggerService } from '../../logger/logger.service';
 import { ExceptionsService } from '../../exceptions/exceptions.service';
-import { TokenPayload } from '../../repositories/models/auth';
-import { LoginUseCases } from '../../../domain/useCases/auth/login.usecases';
+import { TokenPayload } from '../../../domain/models/auth';
+import { LoginUseCase } from '../../../domain/useCases/auth/login.usecases';
 
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
@@ -18,8 +16,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 ) {
   constructor(
     private readonly configService: EnvironmentConfigService,
-    @Inject(UsecasesProxyModule.LOGIN_USECASES_PROXY)
-    private readonly loginUsecaseProxy: UseCaseProxy<LoginUseCases>,
+    private readonly loginUsecaseProxy: LoginUseCase,
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
   ) {
@@ -36,9 +33,10 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
   async validate(request: Request, payload: TokenPayload) {
     const refreshToken = request.cookies?.Refresh;
-    const user = this.loginUsecaseProxy
-      .getInstance()
-      .getUserIfRefreshTokenMatches(refreshToken, payload.username);
+    const user = this.loginUsecase.getUserIfRefreshTokenMatches(
+      refreshToken,
+      payload.username,
+    );
     if (!user) {
       this.logger.warn('JwtStrategy', `User not found or hash not correct`);
       this.exceptionService.UnauthorizedException({

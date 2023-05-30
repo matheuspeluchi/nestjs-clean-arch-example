@@ -1,4 +1,4 @@
-import { TodoModel } from '../models/todo.model';
+import { TodoModel } from '../../../domain/models/todo.model';
 
 export abstract class TodoRepository {
   abstract insert(todo: TodoModel): Promise<void>;
