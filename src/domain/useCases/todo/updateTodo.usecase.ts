@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TodoRepository } from '../../../infra/repositories/todo/todoRepository.interface';
+import { TodoRepository } from '../../../infra/repositories/todo/todo.repository';
 import { Usecase } from '../UseCase.interface';
 import { LoggerService } from '../../../infra/logger/logger.service';
 @Injectable()

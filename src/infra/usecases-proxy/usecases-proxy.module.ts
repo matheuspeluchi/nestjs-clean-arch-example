@@ -10,7 +10,7 @@ import { DeleteTodoUseCases } from '../../domain/useCases/todo/deleteTodo.usecas
 import { GetTodoUseCases } from '../../domain/useCases/todo/getTodo.usecase';
 import { ListTodosUseCases } from '../../domain/useCases/todo/listTodos.usecase';
 import { UpdateTodoUseCases } from '../../domain/useCases/todo/updateTodo.usecase';
-import { TodoRepository } from '../repositories/todo/todoRepository.interface';
+import { TodoRepository } from '../repositories/todo/todo.repository';
 
 @Module({
   imports: [LoggerModule, RepositoriesModule, ExceptionsModule],

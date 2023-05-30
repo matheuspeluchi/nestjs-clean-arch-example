@@ -1,5 +1,5 @@
 import { UserModel } from '../../models/user.model';
-import { UserRepository } from '../../../infra/repositories/user/userRepository.interface';
+import { UserRepository } from '../../../infra/repositories/user/user.repository';
 
 export class IsAuthenticatedUseCase {
   constructor(private readonly adminUserRepo: UserRepository) {}

@@ -1,6 +1,6 @@
 import { JWTConfig } from '../../../../infra/config/jwt/jwt.interface';
 import { IException } from '../../../../infra/exceptions/exceptions.interface';
-import { UserRepository } from '../../../../infra/repositories/user/userRepository.interface';
+import { UserRepository } from '../../../../infra/repositories/user/user.repository';
 import { BcryptService } from '../../../../infra/services/bcrypt/bcrypt.service';
 import { UserModel } from '../../../models/user.model';
 import { IsAuthenticatedUseCase } from '../isAuthenticated.usecases';

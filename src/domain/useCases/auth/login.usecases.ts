@@ -4,7 +4,7 @@ import {
   IJwtServicePayload,
   JwtService,
 } from '../../../infra/adapters/jwt.interface';
-import { UserRepository } from '../../../infra/repositories/user/userRepository.interface';
+import { UserRepository } from '../../../infra/repositories/user/user.repository';
 import { LoggerService } from '../../../infra/logger/logger.service';
 import { EnvironmentConfigService } from '../../../infra/config/environment-config/environment-config.service';
 

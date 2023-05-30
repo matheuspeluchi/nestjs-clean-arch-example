@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TodoModel } from '../../models/todo.model';
-import { TodoRepository } from '../../../infra/repositories/todo/todoRepository.interface';
+import { TodoRepository } from '../../../infra/repositories/todo/todo.repository';
 import { Usecase } from '../UseCase.interface';
 @Injectable()
 export class GetTodoUseCases implements Usecase {
