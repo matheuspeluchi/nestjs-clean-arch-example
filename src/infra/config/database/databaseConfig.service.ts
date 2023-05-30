@@ -3,7 +3,7 @@ import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { EnvironmentConfigService } from '../environment-config/environment-config.service';
 
 @Injectable()
-export class TypeOrmConfigService implements TypeOrmOptionsFactory {
+export class DatabaseConfigService implements TypeOrmOptionsFactory {
   constructor(private readonly configService: EnvironmentConfigService) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
@@ -14,7 +14,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: this.configService.getDatabaseUser(),
       password: this.configService.getDatabasePassword(),
       database: this.configService.getDatabaseName(),
-      entities: [__dirname + '/../**/*.entity.ts'],
+      entities: ['dist/**/*.entity.{ts,js}'],
       synchronize: false,
       // ssl: {
       //   rejectUnauthorized: false,

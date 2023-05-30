@@ -5,19 +5,22 @@ export class TodoPresenter {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  content: string;
+  title: string;
+  @ApiProperty()
+  description: string;
   @ApiProperty()
   isDone: boolean;
   @ApiProperty()
-  createdate: Date;
+  createdAt: Date;
   @ApiProperty()
-  updateddate: Date;
+  updatedAt: Date;
 
   constructor(todo: TodoModel) {
     this.id = todo.id;
-    this.content = todo.content;
+    this.title = todo.title;
+    this.description = todo.description;
     this.isDone = todo.isDone;
-    this.createdate = todo.createdate;
-    this.updateddate = todo.updateddate;
+    this.createdAt = todo.createdAt;
+    this.updatedAt = todo.updatedAt;
   }
 }

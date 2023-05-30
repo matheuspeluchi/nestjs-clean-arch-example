@@ -37,8 +37,6 @@ class EnvironmentVariables {
   DATABASE_PASSWORD: string;
   @IsString()
   DATABASE_NAME: string;
-  @IsString()
-  DATABASE_SCHEMA: string;
   @IsBoolean()
   DATABASE_SYNCHRONIZE: boolean;
 }

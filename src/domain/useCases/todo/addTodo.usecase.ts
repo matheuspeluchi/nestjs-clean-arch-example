@@ -11,10 +11,12 @@ export class AddTodoUseCases implements Usecase {
     private readonly todoRepository: TodoRepository,
   ) {}
 
-  async execute(content: string): Promise<TodoModel> {
+  async execute(title: string, description: string): Promise<TodoModel> {
     const todo = new TodoModel();
-    todo.content = content;
+    todo.title = title;
+    todo.description = description;
     todo.isDone = false;
+    todo.createdAt = new Date();
     await this.todoRepository.insert(todo);
     this.logger.log('addTodoUseCases execute', 'New todo have been inserted');
     return todo;

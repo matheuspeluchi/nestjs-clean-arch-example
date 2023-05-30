@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigModule } from '../config/typeorm/typeorm.module';
+import { TypeOrmConfigModule } from '../config/database/database.module';
 import { Todo } from './entities/todo.entity';
 import { User } from './entities/user.entity';
 import { DatabaseTodoRepository } from './todo/todo.repository';

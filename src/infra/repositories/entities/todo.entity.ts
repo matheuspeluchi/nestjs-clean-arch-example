@@ -6,20 +6,23 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'todo' })
 export class Todo {
   @PrimaryGeneratedColumn({ type: 'integer' })
   id: number;
 
   @Column('varchar', { length: 255, nullable: true })
-  content: string;
+  title: string;
+
+  @Column('varchar', { length: 255, nullable: true })
+  description: string;
 
   @Column('boolean', { default: false })
   isDone: boolean;
 
-  @CreateDateColumn({ name: 'createdate' })
-  createdate: Date;
+  @CreateDateColumn({ name: 'createdAt', default: new Date() })
+  createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updateddate' })
-  updateddate: Date;
+  @UpdateDateColumn({ name: 'updatedAt' })
+  updatedAt: Date;
 }

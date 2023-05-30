@@ -1,7 +1,8 @@
 export class TodoModel {
   id: number;
-  content: string;
+  title: string;
+  description: string;
   isDone: boolean;
-  createdate: Date;
-  updateddate: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -8,6 +8,7 @@ export class ListTodosUseCases implements Usecase {
   constructor(private readonly todoRepository: TodoRepository) {}
 
   async execute(): Promise<TodoModel[]> {
-    return await this.todoRepository.findAll();
+    const todoList = await this.todoRepository.findAll();
+    return todoList;
   }
 }

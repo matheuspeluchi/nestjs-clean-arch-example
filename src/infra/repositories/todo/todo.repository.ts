@@ -44,10 +44,11 @@ export class DatabaseTodoRepository extends TodoRepository {
     const todo: TodoModel = new TodoModel();
 
     todo.id = todoEntity.id;
-    todo.content = todoEntity.content;
+    todo.title = todoEntity.title;
+    todo.description = todoEntity.description;
     todo.isDone = todoEntity.isDone;
-    todo.createdate = todoEntity.createdate;
-    todo.updateddate = todoEntity.updateddate;
+    todo.createdAt = todoEntity.createdAt;
+    todo.updatedAt = todoEntity.updatedAt;
 
     return todo;
   }
@@ -56,7 +57,8 @@ export class DatabaseTodoRepository extends TodoRepository {
     const todoEntity: Todo = new Todo();
 
     todoEntity.id = todo.id;
-    todoEntity.content = todo.content;
+    todoEntity.title = todo.title;
+    todoEntity.description = todo.description;
     todoEntity.isDone = todo.isDone;
 
     return todoEntity;

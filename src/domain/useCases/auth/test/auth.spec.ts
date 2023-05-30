@@ -1,35 +1,36 @@
-import { IBcryptService } from '../../../../infra/adapters/encryption.interface';
-import { IJwtService } from '../../../../infra/adapters/jwt.interface';
 import { JWTConfig } from '../../../../infra/config/jwt/jwt.interface';
 import { IException } from '../../../../infra/exceptions/exceptions.interface';
-import { ILogger } from '../../../../infra/logger/logger.interface';
+import { UserRepository } from '../../../../infra/repositories/user/userRepository.interface';
+import { BcryptService } from '../../../../infra/services/bcrypt/bcrypt.service';
 import { UserModel } from '../../../models/user.model';
-import { UserRepository } from '../../../../infra/repositories/user/user.repository';
 import { IsAuthenticatedUseCase } from '../isAuthenticated.usecases';
 import { LoginUseCase } from '../login.usecases';
 import { LogoutUseCase } from '../logout.usecases';
+import { LoggerService } from '../../../../infra/logger/logger.service';
+import { JwtService } from '../../../../infra/adapters/jwt.interface';
+import { EnvironmentConfigService } from '../../../../infra/config/environment-config/environment-config.service';
 
 describe('uses_cases/authentication', () => {
   let loginUseCases: LoginUseCase;
   let logoutUseCases: LogoutUseCase;
   let isAuthenticated: IsAuthenticatedUseCase;
-  let logger: ILogger;
+  let logger: LoggerService;
   let exception: IException;
-  let jwtService: IJwtService;
-  let jwtConfig: JWTConfig;
+  let jwtService: JwtService;
+  let jwtConfig: EnvironmentConfigService;
   let adminUserRepo: UserRepository;
-  let bcryptService: IBcryptService;
+  let bcryptService: BcryptService;
 
   beforeEach(() => {
-    logger = {} as ILogger;
+    logger = {} as LoggerService;
     logger.log = jest.fn();
 
     exception = {} as IException;
 
-    jwtService = {} as IJwtService;
+    jwtService = {} as JwtService;
     jwtService.createToken = jest.fn();
 
-    jwtConfig = {} as JWTConfig;
+    jwtConfig = {} as EnvironmentConfigService;
     jwtConfig.getJwtExpirationTime = jest.fn();
     jwtConfig.getJwtSecret = jest.fn();
     jwtConfig.getJwtRefreshSecret = jest.fn();
@@ -40,7 +41,7 @@ describe('uses_cases/authentication', () => {
     adminUserRepo.updateLastLogin = jest.fn();
     adminUserRepo.updateRefreshToken = jest.fn();
 
-    bcryptService = {} as IBcryptService;
+    bcryptService = {} as BcryptService;
     bcryptService.compare = jest.fn();
     bcryptService.hash = jest.fn();
 

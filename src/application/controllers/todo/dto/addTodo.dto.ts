@@ -5,5 +5,10 @@ export class AddTodoDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsString()
-  readonly content: string;
+  readonly title: string;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  @IsString()
+  readonly description: string;
 }
