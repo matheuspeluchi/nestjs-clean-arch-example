@@ -21,7 +21,6 @@ import { IsAuthPresenter } from '../../presenters/auth/auth.presenter';
 
 import { JwtAuthGuard } from '../../../infra/common/guards/jwtAuth.guard';
 import JwtRefreshGuard from '../../../infra/common/guards/jwtRefresh.guard';
-import { LoginGuard } from '../../../infra/common/guards/login.guard';
 import { ApiResponseType } from '../../../infra/common/swagger/response.decorator';
 import { IsAuthenticatedUseCase } from '../../../domain/useCases/auth/isAuthenticated.usecases';
 import { LoginUseCase } from '../../../domain/useCases/auth/login.usecases';
@@ -43,11 +42,13 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  @UseGuards(LoginGuard)
-  @ApiBearerAuth()
   @ApiBody({ type: AuthLoginDto })
   @ApiOperation({ description: 'login' })
   async login(@Body() auth: AuthLoginDto, @Request() request: any) {
+    const { username, password } = auth;
+
+    await this.loginUsecase.authenticate(username, password);
+
     const accessTokenCookie = await this.loginUsecase.getCookieWithJwtToken(
       auth.username,
     );

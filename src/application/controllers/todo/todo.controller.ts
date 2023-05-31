@@ -21,7 +21,6 @@ import { AddTodoDto } from './dto/addTodo.dto';
 import { TodoPresenter } from '../../presenters/todo/todo.presenter';
 import { UpdateTodoDto } from './dto/updateTodo.dto';
 import { JwtAuthGuard } from '../../../infra/common/guards/jwtAuth.guard';
-import { LoginGuard } from '../../../infra/common/guards/login.guard';
 
 @Controller('todos')
 @ApiTags('todo')
@@ -37,14 +36,15 @@ export class TodoController {
   ) {}
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiResponseType(TodoPresenter, false)
-  async getTodo(@Query('id', ParseIntPipe) id: number) {
+  async getTodo(@Query('id') id: number) {
     const todo = await this.getTodoUsecaseProxy.execute(id);
     return new TodoPresenter(todo);
   }
 
-  @UseGuards(LoginGuard)
   @Get()
+  @UseGuards(JwtAuthGuard)
   @ApiResponseType(TodoPresenter, true)
   async getTodos() {
     const todos = await this.listUsecase.execute();
@@ -52,6 +52,7 @@ export class TodoController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiResponseType(TodoPresenter, true)
   async updateTodo(@Body() updateTodoDto: UpdateTodoDto) {
     const { id, isDone } = updateTodoDto;
@@ -60,6 +61,7 @@ export class TodoController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiResponseType(TodoPresenter, true)
   async deleteTodo(@Query('id', ParseIntPipe) id: number) {
     await this.deleteTodoUsecaseProxy.execute(id);

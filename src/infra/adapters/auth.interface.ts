@@ -2,8 +2,8 @@ export interface IJwtServicePayload {
   username: string;
 }
 
-export abstract class JwtService {
-  abstract checkToken(token: string): Promise<any>;
+export abstract class AuthService {
+  abstract verify(token: string): Promise<boolean>;
   abstract createToken(
     payload: IJwtServicePayload,
     secret: string,

@@ -7,7 +7,7 @@ import { IsAuthenticatedUseCase } from '../isAuthenticated.usecases';
 import { LoginUseCase } from '../login.usecases';
 import { LogoutUseCase } from '../logout.usecases';
 import { LoggerService } from '../../../../infra/logger/logger.service';
-import { JwtService } from '../../../../infra/adapters/jwt.interface';
+import { JwtService } from '../../../../infra/adapters/auth.interface';
 import { EnvironmentConfigService } from '../../../../infra/config/environment-config/environment-config.service';
 
 describe('uses_cases/authentication', () => {

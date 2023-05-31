@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { EncryptionService } from '../../../infra/adapters/encryption.interface';
 import {
   IJwtServicePayload,
-  JwtService,
-} from '../../../infra/adapters/jwt.interface';
+  AuthService,
+} from '../../../infra/adapters/auth.interface';
 import { UserRepository } from '../../../infra/repositories/user/user.repository';
 import { LoggerService } from '../../../infra/logger/logger.service';
 import { EnvironmentConfigService } from '../../../infra/config/environment-config/environment-config.service';
@@ -12,11 +12,25 @@ import { EnvironmentConfigService } from '../../../infra/config/environment-conf
 export class LoginUseCase {
   constructor(
     private readonly logger: LoggerService,
-    private readonly jwtTokenService: JwtService,
+    private readonly authTokenService: AuthService,
     private readonly configService: EnvironmentConfigService,
     private readonly userRepository: UserRepository,
     private readonly bcryptService: EncryptionService,
   ) {}
+
+  async authenticate(username: string, password: string): Promise<boolean> {
+    let isValidUsernameAndPassword = false;
+    const user = await this.userRepository.getUserByUsername(username);
+    if (user)
+      isValidUsernameAndPassword = await this.bcryptService.compare(
+        password,
+        user.password,
+      );
+
+    if (isValidUsernameAndPassword) return isValidUsernameAndPassword;
+
+    throw new UnauthorizedException('Invalid username or password');
+  }
 
   async getCookieWithJwtToken(username: string) {
     this.logger.log(
@@ -26,8 +40,8 @@ export class LoginUseCase {
     const payload: IJwtServicePayload = { username: username };
     const secret = this.configService.getJwtSecret();
     const expiresIn = this.configService.getJwtExpirationTime() + 's';
-    const token = this.jwtTokenService.createToken(payload, secret, expiresIn);
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.getJwtExpirationTime()}`;
+    const token = this.authTokenService.createToken(payload, secret, expiresIn);
+    return `Authorization=${token}; HttpOnly; Path=/; Max-Age=${this.configService.getJwtExpirationTime()}`;
   }
 
   async getCookieWithJwtRefreshToken(username: string) {
@@ -38,27 +52,13 @@ export class LoginUseCase {
     const payload: IJwtServicePayload = { username: username };
     const secret = this.configService.getJwtRefreshSecret();
     const expiresIn = this.configService.getJwtRefreshExpirationTime() + 's';
-    const token = this.jwtTokenService.createToken(payload, secret, expiresIn);
+    const token = this.authTokenService.createToken(payload, secret, expiresIn);
     await this.setCurrentRefreshToken(token, username);
     const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.configService.getJwtRefreshExpirationTime()}`;
     return cookie;
   }
 
-  async validateUserForLocalStragtegy(username: string, pass: string) {
-    const user = await this.userRepository.getUserByUsername(username);
-    if (!user) {
-      return null;
-    }
-    const match = await this.bcryptService.compare(pass, user.password);
-    if (user && match) {
-      await this.updateLoginTime(user.username);
-      const { ...result } = user;
-      return result;
-    }
-    return null;
-  }
-
-  async validateUserForJWTStragtegy(username: string) {
+  async validateUser(username: string) {
     const user = await this.userRepository.getUserByUsername(username);
     if (!user) {
       return null;

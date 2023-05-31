@@ -7,6 +7,10 @@ import { JWTConfig } from '../jwt/jwt.interface';
 export class EnvironmentConfigService implements DatabaseConfig, JWTConfig {
   constructor(private configService: ConfigService) {}
 
+  getEnvironment(): string {
+    return this.configService.get<string>('NODE_ENV');
+  }
+
   getJwtRefreshSecret(): string {
     return this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET');
   }
