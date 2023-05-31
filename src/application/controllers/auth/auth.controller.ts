@@ -37,9 +37,9 @@ import { LogoutUseCase } from '../../../domain/useCases/auth/logout.usecases';
 @ApiExtraModels(IsAuthPresenter)
 export class AuthController {
   constructor(
-    private readonly loginUsecaseProxy: LoginUseCase,
-    private readonly logoutUsecaseProxy: LogoutUseCase,
-    private readonly isAuthUsecaseProxy: IsAuthenticatedUseCase,
+    private readonly loginUsecase: LoginUseCase,
+    private readonly logoutUsecase: LogoutUseCase,
+    private readonly isAuthUsecase: IsAuthenticatedUseCase,
   ) {}
 
   @Post('login')
@@ -48,10 +48,11 @@ export class AuthController {
   @ApiBody({ type: AuthLoginDto })
   @ApiOperation({ description: 'login' })
   async login(@Body() auth: AuthLoginDto, @Request() request: any) {
-    const accessTokenCookie =
-      await this.loginUsecaseProxy.getCookieWithJwtToken(auth.username);
+    const accessTokenCookie = await this.loginUsecase.getCookieWithJwtToken(
+      auth.username,
+    );
     const refreshTokenCookie =
-      await this.loginUsecaseProxy.getCookieWithJwtRefreshToken(auth.username);
+      await this.loginUsecase.getCookieWithJwtRefreshToken(auth.username);
     request.res.setHeader('Set-Cookie', [
       accessTokenCookie,
       refreshTokenCookie,
@@ -63,7 +64,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'logout' })
   async logout(@Request() request: any) {
-    const cookie = await this.logoutUsecaseProxy.execute();
+    const cookie = await this.logoutUsecase.execute();
     request.res.setHeader('Set-Cookie', cookie);
     return 'Logout successful';
   }
@@ -74,7 +75,7 @@ export class AuthController {
   @ApiOperation({ description: 'is_authenticated' })
   @ApiResponseType(IsAuthPresenter, false)
   async isAuthenticated(@Req() request: any) {
-    const user = await this.isAuthUsecaseProxy.execute(request.user.username);
+    const user = await this.isAuthUsecase.execute(request.user.username);
     const response = new IsAuthPresenter();
     response.username = user.username;
     return response;
@@ -84,8 +85,9 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @ApiBearerAuth()
   async refresh(@Req() request: any) {
-    const accessTokenCookie =
-      await this.loginUsecaseProxy.getCookieWithJwtToken(request.user.username);
+    const accessTokenCookie = await this.loginUsecase.getCookieWithJwtToken(
+      request.user.username,
+    );
     request.res.setHeader('Set-Cookie', accessTokenCookie);
     return 'Refresh successful';
   }

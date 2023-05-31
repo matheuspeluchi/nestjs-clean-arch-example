@@ -19,15 +19,15 @@ export class User {
   @Column('text')
   password: string;
 
-  @CreateDateColumn({ name: 'createdate' })
-  createdate: Date;
+  @CreateDateColumn({ name: 'createdAt' })
+  createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updateddate' })
-  updateddate: Date;
+  @UpdateDateColumn({ name: 'updatedAt' })
+  updatedAt: Date;
 
   @Column({ nullable: true })
-  last_login?: Date;
+  lastLogin?: Date;
 
   @Column('varchar', { nullable: true })
-  hach_refresh_token: string;
+  hachRefreshToken: string;
 }

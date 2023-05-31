@@ -52,7 +52,7 @@ export class LoginUseCase {
     const match = await this.bcryptService.compare(pass, user.password);
     if (user && match) {
       await this.updateLoginTime(user.username);
-      const { password, ...result } = user;
+      const { ...result } = user;
       return result;
     }
     return null;

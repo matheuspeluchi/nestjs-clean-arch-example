@@ -8,6 +8,7 @@ import {
   Body,
   Delete,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiExtraModels } from '@nestjs/swagger';
 import { AddTodoUseCases } from '../../../domain/useCases/todo/addTodo.usecase';
@@ -19,6 +20,8 @@ import { ApiResponseType } from '../../../infra/common/swagger/response.decorato
 import { AddTodoDto } from './dto/addTodo.dto';
 import { TodoPresenter } from '../../presenters/todo/todo.presenter';
 import { UpdateTodoDto } from './dto/updateTodo.dto';
+import { JwtAuthGuard } from '../../../infra/common/guards/jwtAuth.guard';
+import { LoginGuard } from '../../../infra/common/guards/login.guard';
 
 @Controller('todos')
 @ApiTags('todo')
@@ -40,6 +43,7 @@ export class TodoController {
     return new TodoPresenter(todo);
   }
 
+  @UseGuards(LoginGuard)
   @Get()
   @ApiResponseType(TodoPresenter, true)
   async getTodos() {

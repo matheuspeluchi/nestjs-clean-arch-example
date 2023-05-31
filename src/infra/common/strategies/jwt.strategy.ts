@@ -9,7 +9,7 @@ import { LoginUseCase } from '../../../domain/useCases/auth/login.usecases';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly loginUsecaseProxy: LoginUseCase,
+    private readonly loginUsecase: LoginUseCase,
     private readonly logger: LoggerService,
     private readonly exceptionService: ExceptionsService,
   ) {
@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const user = this.loginUsecaseProxy.validateUserForJWTStragtegy(
+    const user = this.loginUsecase.validateUserForJWTStragtegy(
       payload.username,
     );
     if (!user) {

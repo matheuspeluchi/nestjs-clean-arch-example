@@ -21,7 +21,7 @@ export class DatabaseUserRepository extends UserRepository {
       {
         username: username,
       },
-      { hach_refresh_token: refreshToken },
+      { hachRefreshToken: refreshToken },
     );
   }
   async getUserByUsername(username: string): Promise<UserModel> {
@@ -40,7 +40,7 @@ export class DatabaseUserRepository extends UserRepository {
       {
         username: username,
       },
-      { last_login: () => 'CURRENT_TIMESTAMP' },
+      { lastLogin: () => 'CURRENT_TIMESTAMP' },
     );
   }
 
@@ -50,10 +50,10 @@ export class DatabaseUserRepository extends UserRepository {
     adminUser.id = adminUserEntity.id;
     adminUser.username = adminUserEntity.username;
     adminUser.password = adminUserEntity.password;
-    adminUser.createDate = adminUserEntity.createdate;
-    adminUser.updatedDate = adminUserEntity.updateddate;
-    adminUser.lastLogin = adminUserEntity.last_login;
-    adminUser.hashRefreshToken = adminUserEntity.hach_refresh_token;
+    adminUser.createdAT = adminUserEntity.createdAt;
+    adminUser.updatedAt = adminUserEntity.updatedAt;
+    adminUser.lastLogin = adminUserEntity.lastLogin;
+    adminUser.hashRefreshToken = adminUserEntity.hachRefreshToken;
 
     return adminUser;
   }
@@ -63,7 +63,7 @@ export class DatabaseUserRepository extends UserRepository {
 
     adminUserEntity.username = adminUser.username;
     adminUserEntity.password = adminUser.password;
-    adminUserEntity.last_login = adminUser.lastLogin;
+    adminUserEntity.lastLogin = adminUser.lastLogin;
 
     return adminUserEntity;
   }

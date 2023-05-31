@@ -1,9 +1,9 @@
 export class UserModel {
   id: number;
   username: string;
-  createDate: Date;
   password: string;
-  updatedDate: Date;
+  createdAT: Date;
+  updatedAt: Date;
   lastLogin: Date;
   hashRefreshToken: string;
 }
