@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EnvironmentConfigService } from './environment-config.service';
 import { validate } from './environment-config.validation';
+import { EnvironmentConfig } from '../../adapters/environment.mixin';
 
 @Module({
   imports: [
@@ -15,7 +16,9 @@ import { validate } from './environment-config.validation';
       validate,
     }),
   ],
-  providers: [EnvironmentConfigService],
-  exports: [EnvironmentConfigService],
+  providers: [
+    { provide: EnvironmentConfig, useClass: EnvironmentConfigService },
+  ],
+  exports: [EnvironmentConfig],
 })
 export class EnvironmentConfigModule {}

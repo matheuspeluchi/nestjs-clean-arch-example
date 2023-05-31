@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseConfig } from './database.interface';
 import { ConfigService } from '@nestjs/config';
-import { JWTConfig } from '../jwt/jwt.interface';
+import { EnvironmentConfig } from '../../adapters/environment.mixin';
 
 @Injectable()
-export class EnvironmentConfigService implements DatabaseConfig, JWTConfig {
-  constructor(private configService: ConfigService) {}
+export class EnvironmentConfigService extends EnvironmentConfig {
+  constructor(private configService: ConfigService) {
+    super();
+  }
 
   getEnvironment(): string {
     return this.configService.get<string>('NODE_ENV');
   }
-
   getJwtRefreshSecret(): string {
     return this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET');
   }

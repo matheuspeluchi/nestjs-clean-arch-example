@@ -1,4 +1,4 @@
-import { JWTConfig } from '../../../../infra/config/jwt/jwt.interface';
+import { JWTConfig } from '../../../../infra/adapters/jwt.interface';
 import { IException } from '../../../../infra/exceptions/exceptions.interface';
 import { UserRepository } from '../../../../infra/repositories/user/user.repository';
 import { BcryptService } from '../../../../infra/services/bcrypt/bcrypt.service';
@@ -8,7 +8,7 @@ import { LoginUseCase } from '../login.usecases';
 import { LogoutUseCase } from '../logout.usecases';
 import { LoggerService } from '../../../../infra/logger/logger.service';
 import { JwtService } from '../../../../infra/adapters/auth.interface';
-import { EnvironmentConfigService } from '../../../../infra/config/environment-config/environment-config.service';
+import { EnvironmentConfig } from '../../../../infra/config/environment-config/environment-config.service';
 
 describe('uses_cases/authentication', () => {
   let loginUseCases: LoginUseCase;
@@ -17,7 +17,7 @@ describe('uses_cases/authentication', () => {
   let logger: LoggerService;
   let exception: IException;
   let jwtService: JwtService;
-  let jwtConfig: EnvironmentConfigService;
+  let jwtConfig: EnvironmentConfig;
   let adminUserRepo: UserRepository;
   let bcryptService: BcryptService;
 
@@ -30,7 +30,7 @@ describe('uses_cases/authentication', () => {
     jwtService = {} as JwtService;
     jwtService.createToken = jest.fn();
 
-    jwtConfig = {} as EnvironmentConfigService;
+    jwtConfig = {} as EnvironmentConfig;
     jwtConfig.getJwtExpirationTime = jest.fn();
     jwtConfig.getJwtSecret = jest.fn();
     jwtConfig.getJwtRefreshSecret = jest.fn();

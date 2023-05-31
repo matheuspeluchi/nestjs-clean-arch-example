@@ -3,14 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EnvironmentConfigModule } from '../environment-config/environment-config.module';
 
 import { DatabaseConfigService } from './databaseConfig.service';
-import { EnvironmentConfigService } from '../environment-config/environment-config.service';
+import { EnvironmentConfig } from '../../adapters/environment.mixin';
 
 @Module({
   imports: [
     EnvironmentConfigModule,
     TypeOrmModule.forRootAsync({
       imports: [EnvironmentConfigModule],
-      inject: [EnvironmentConfigService],
+      inject: [EnvironmentConfig],
       useClass: DatabaseConfigService,
     }),
   ],

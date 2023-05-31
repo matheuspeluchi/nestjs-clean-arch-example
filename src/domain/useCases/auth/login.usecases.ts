@@ -6,14 +6,14 @@ import {
 } from '../../../infra/adapters/auth.interface';
 import { UserRepository } from '../../../infra/repositories/user/user.repository';
 import { LoggerService } from '../../../infra/logger/logger.service';
-import { EnvironmentConfigService } from '../../../infra/config/environment-config/environment-config.service';
+import { EnvironmentConfig } from '../../../infra/adapters/environment.mixin';
 
 @Injectable()
 export class LoginUseCase {
   constructor(
     private readonly logger: LoggerService,
     private readonly authTokenService: AuthService,
-    private readonly configService: EnvironmentConfigService,
+    private readonly configService: EnvironmentConfig,
     private readonly userRepository: UserRepository,
     private readonly bcryptService: EncryptionService,
   ) {}
