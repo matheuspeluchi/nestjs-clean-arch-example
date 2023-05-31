@@ -11,16 +11,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse, ApiExtraModels } from '@nestjs/swagger';
-import { AddTodoUseCases } from '../../../domain/useCases/todo/addTodo.usecase';
-import { DeleteTodoUseCases } from '../../../domain/useCases/todo/deleteTodo.usecase';
-import { GetTodoUseCases } from '../../../domain/useCases/todo/getTodo.usecase';
-import { ListTodosUseCases } from '../../../domain/useCases/todo/listTodos.usecase';
-import { UpdateTodoUseCases } from '../../../domain/useCases/todo/updateTodo.usecase';
+import { AddTodoUseCases } from '../../../domain/todo/useCases/addTodo.usecase';
+
 import { ApiResponseType } from '../../../infra/common/swagger/response.decorator';
 import { AddTodoDto } from './dto/addTodo.dto';
 import { TodoPresenter } from '../../presenters/todo/todo.presenter';
 import { UpdateTodoDto } from './dto/updateTodo.dto';
 import { JwtAuthGuard } from '../../../infra/common/guards/jwtAuth.guard';
+import { DeleteTodoUseCases } from '../../../domain/todo/useCases/deleteTodo.usecase';
+import { GetTodoUseCases } from '../../../domain/todo/useCases/getTodo.usecase';
+import { ListTodosUseCases } from '../../../domain/todo/useCases/listTodos.usecase';
+import { UpdateTodoUseCases } from '../../../domain/todo/useCases/updateTodo.usecase';
 
 @Controller('todos')
 @ApiTags('todo')

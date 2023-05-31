@@ -7,18 +7,22 @@ import {
 import { UserRepository } from '../../../infra/repositories/user/user.repository';
 import { LoggerService } from '../../../infra/logger/logger.service';
 import { EnvironmentConfig } from '../../../infra/adapters/environment.mixin';
+import { Usecase } from '../../../infra/adapters/useCase.interface';
+import { AuthenticatedDTO } from '../dto/authenticate.dto';
 
 @Injectable()
-export class LoginUseCase {
+export class LoginUseCase extends Usecase<AuthenticatedDTO> {
   constructor(
     private readonly logger: LoggerService,
     private readonly authTokenService: AuthService,
     private readonly configService: EnvironmentConfig,
     private readonly userRepository: UserRepository,
     private readonly bcryptService: EncryptionService,
-  ) {}
+  ) {
+    super();
+  }
 
-  async authenticate(username: string, password: string): Promise<boolean> {
+  async execute(username: string, password: string) {
     let isValidUsernameAndPassword = false;
     const user = await this.userRepository.getUserByUsername(username);
     if (user)
@@ -27,7 +31,13 @@ export class LoginUseCase {
         user.password,
       );
 
-    if (isValidUsernameAndPassword) return isValidUsernameAndPassword;
+    if (isValidUsernameAndPassword) {
+      const accessTokenCookie = await this.getCookieWithJwtToken(username);
+      const refreshTokenCookie = await this.getCookieWithJwtRefreshToken(
+        username,
+      );
+      return { accessTokenCookie, refreshTokenCookie };
+    }
 
     throw new UnauthorizedException('Invalid username or password');
   }
@@ -40,8 +50,7 @@ export class LoginUseCase {
     const payload: IJwtServicePayload = { username: username };
     const secret = this.configService.getJwtSecret();
     const expiresIn = this.configService.getJwtExpirationTime() + 's';
-    const token = this.authTokenService.createToken(payload, secret, expiresIn);
-    return `Authorization=${token}; HttpOnly; Path=/; Max-Age=${this.configService.getJwtExpirationTime()}`;
+    return this.authTokenService.createToken(payload, secret, expiresIn);
   }
 
   async getCookieWithJwtRefreshToken(username: string) {
@@ -54,8 +63,7 @@ export class LoginUseCase {
     const expiresIn = this.configService.getJwtRefreshExpirationTime() + 's';
     const token = this.authTokenService.createToken(payload, secret, expiresIn);
     await this.setCurrentRefreshToken(token, username);
-    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${this.configService.getJwtRefreshExpirationTime()}`;
-    return cookie;
+    return token;
   }
 
   async validateUser(username: string) {

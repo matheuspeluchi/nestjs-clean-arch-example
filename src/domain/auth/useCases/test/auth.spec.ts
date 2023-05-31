@@ -1,22 +1,19 @@
-import { JWTConfig } from '../../../../infra/adapters/jwt.interface';
-import { IException } from '../../../../infra/exceptions/exceptions.interface';
 import { UserRepository } from '../../../../infra/repositories/user/user.repository';
 import { BcryptService } from '../../../../infra/services/bcrypt/bcrypt.service';
-import { UserModel } from '../../../models/user.model';
+import { UserModel } from '../../../user/models/user.model';
 import { IsAuthenticatedUseCase } from '../isAuthenticated.usecases';
 import { LoginUseCase } from '../login.usecases';
 import { LogoutUseCase } from '../logout.usecases';
 import { LoggerService } from '../../../../infra/logger/logger.service';
-import { JwtService } from '../../../../infra/adapters/auth.interface';
-import { EnvironmentConfig } from '../../../../infra/config/environment-config/environment-config.service';
+import { AuthService } from '../../../../infra/adapters/auth.interface';
+import { EnvironmentConfig } from '../../../../infra/adapters/environment.mixin';
 
 describe('uses_cases/authentication', () => {
   let loginUseCases: LoginUseCase;
   let logoutUseCases: LogoutUseCase;
   let isAuthenticated: IsAuthenticatedUseCase;
   let logger: LoggerService;
-  let exception: IException;
-  let jwtService: JwtService;
+  let authService: AuthService;
   let jwtConfig: EnvironmentConfig;
   let adminUserRepo: UserRepository;
   let bcryptService: BcryptService;
@@ -25,12 +22,8 @@ describe('uses_cases/authentication', () => {
     logger = {} as LoggerService;
     logger.log = jest.fn();
 
-    exception = {} as IException;
+    authService.createToken = jest.fn();
 
-    jwtService = {} as JwtService;
-    jwtService.createToken = jest.fn();
-
-    jwtConfig = {} as EnvironmentConfig;
     jwtConfig.getJwtExpirationTime = jest.fn();
     jwtConfig.getJwtSecret = jest.fn();
     jwtConfig.getJwtRefreshSecret = jest.fn();
@@ -47,7 +40,7 @@ describe('uses_cases/authentication', () => {
 
     loginUseCases = new LoginUseCase(
       logger,
-      jwtService,
+      authService,
       jwtConfig,
       adminUserRepo,
       bcryptService,
@@ -62,7 +55,7 @@ describe('uses_cases/authentication', () => {
       const token = 'token';
       (jwtConfig.getJwtSecret as jest.Mock).mockReturnValue(() => 'secret');
       (jwtConfig.getJwtExpirationTime as jest.Mock).mockReturnValue(expireIn);
-      (jwtService.createToken as jest.Mock).mockReturnValue(token);
+      (authService.createToken as jest.Mock).mockReturnValue(token);
 
       expect(await loginUseCases.getCookieWithJwtToken('username')).toEqual(
         `Authentication=${token}; HttpOnly; Path=/; Max-Age=${expireIn}`,
@@ -77,7 +70,7 @@ describe('uses_cases/authentication', () => {
       (jwtConfig.getJwtRefreshExpirationTime as jest.Mock).mockReturnValue(
         expireIn,
       );
-      (jwtService.createToken as jest.Mock).mockReturnValue(token);
+      (authService.createToken as jest.Mock).mockReturnValue(token);
       (bcryptService.hash as jest.Mock).mockReturnValue(
         Promise.resolve('hashed password'),
       );
@@ -89,105 +82,6 @@ describe('uses_cases/authentication', () => {
         await loginUseCases.getCookieWithJwtRefreshToken('username'),
       ).toEqual(`Refresh=${token}; HttpOnly; Path=/; Max-Age=${expireIn}`);
       expect(adminUserRepo.updateRefreshToken).toBeCalledTimes(1);
-    });
-  });
-
-  describe('validation local strategy', () => {
-    it('should return null because user not found', async () => {
-      (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(
-        Promise.resolve(null),
-      );
-
-      expect(
-        await loginUseCases.validateUserForLocalStragtegy(
-          'username',
-          'password',
-        ),
-      ).toEqual(null);
-    });
-    it('should return null because wrong password', async () => {
-      const user: UserModel = {
-        id: 1,
-        username: 'username',
-        password: 'password',
-        createDate: new Date(),
-        updatedDate: new Date(),
-        lastLogin: null,
-        hashRefreshToken: 'refresh token',
-      };
-      (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(
-        Promise.resolve(user),
-      );
-      (bcryptService.compare as jest.Mock).mockReturnValue(
-        Promise.resolve(false),
-      );
-
-      expect(
-        await loginUseCases.validateUserForLocalStragtegy(
-          'username',
-          'password',
-        ),
-      ).toEqual(null);
-    });
-    it('should return user without password', async () => {
-      const user: UserModel = {
-        id: 1,
-        username: 'username',
-        password: 'password',
-        createDate: new Date(),
-        updatedDate: new Date(),
-        lastLogin: null,
-        hashRefreshToken: 'refresh token',
-      };
-      (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(
-        Promise.resolve(user),
-      );
-      (bcryptService.compare as jest.Mock).mockReturnValue(
-        Promise.resolve(true),
-      );
-
-      const { password, ...rest } = user;
-
-      expect(
-        await loginUseCases.validateUserForLocalStragtegy(
-          'username',
-          'password',
-        ),
-      ).toEqual(rest);
-    });
-  });
-
-  describe('Validation jwt strategy', () => {
-    it('should return null because user not found', async () => {
-      (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(
-        Promise.resolve(null),
-      );
-      (bcryptService.compare as jest.Mock).mockReturnValue(
-        Promise.resolve(false),
-      );
-
-      expect(
-        await loginUseCases.validateUserForJWTStragtegy('username'),
-      ).toEqual(null);
-    });
-
-    it('should return user', async () => {
-      const user: UserModel = {
-        id: 1,
-        username: 'username',
-        password: 'password',
-        createDate: new Date(),
-        updatedDate: new Date(),
-        lastLogin: null,
-        hashRefreshToken: 'refresh token',
-      };
-      (adminUserRepo.getUserByUsername as jest.Mock).mockReturnValue(
-        Promise.resolve(user),
-      );
-
-      expect(
-        await loginUseCases.validateUserForJWTStragtegy('username'),
-      ).toEqual(user);
     });
   });
 
@@ -210,8 +104,8 @@ describe('uses_cases/authentication', () => {
         id: 1,
         username: 'username',
         password: 'password',
-        createDate: new Date(),
-        updatedDate: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
         lastLogin: null,
         hashRefreshToken: 'refresh token',
       };
@@ -235,8 +129,8 @@ describe('uses_cases/authentication', () => {
         id: 1,
         username: 'username',
         password: 'password',
-        createDate: new Date(),
-        updatedDate: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
         lastLogin: null,
         hashRefreshToken: 'refresh token',
       };
@@ -271,8 +165,8 @@ describe('uses_cases/authentication', () => {
         id: 1,
         username: 'username',
         password: 'password',
-        createDate: new Date(),
-        updatedDate: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
         lastLogin: null,
         hashRefreshToken: 'refresh token',
       };

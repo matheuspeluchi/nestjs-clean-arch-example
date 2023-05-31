@@ -1,17 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { TodoModel } from '../../models/todo.model';
+import { TodoModel } from '../models/todo.model';
 import { TodoRepository } from '../../../infra/repositories/todo/todo.repository';
-import { Usecase } from '../UseCase.interface';
+import { Usecase } from '../../../infra/adapters/useCase.interface';
 import { LoggerService } from '../../../infra/logger/logger.service';
+import { TodoDTO } from '../dto/Todo.dto';
 
 @Injectable()
-export class AddTodoUseCases implements Usecase {
+export class AddTodoUseCases extends Usecase<TodoDTO> {
   constructor(
     private readonly logger: LoggerService,
     private readonly todoRepository: TodoRepository,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(title: string, description: string): Promise<TodoModel> {
+  async execute(title: string, description: string) {
     const todo = new TodoModel();
     todo.title = title;
     todo.description = description;

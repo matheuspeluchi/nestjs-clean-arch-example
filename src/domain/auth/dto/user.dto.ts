@@ -1,8 +1,8 @@
-export class UserModel {
+export interface UserDTO {
   id: number;
   username: string;
   password: string;
-  createdAT: Date;
+  createdAt: Date;
   updatedAt: Date;
   lastLogin: Date;
   hashRefreshToken: string;

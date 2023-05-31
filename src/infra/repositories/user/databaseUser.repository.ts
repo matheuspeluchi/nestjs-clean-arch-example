@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { UserModel } from '../../../domain/models/user.model';
+import { UserModel } from '../../../domain/user/models/user.model';
 import { UserRepository } from './user.repository';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -50,7 +50,7 @@ export class DatabaseUserRepository extends UserRepository {
     adminUser.id = adminUserEntity.id;
     adminUser.username = adminUserEntity.username;
     adminUser.password = adminUserEntity.password;
-    adminUser.createdAT = adminUserEntity.createdAt;
+    adminUser.createdAt = adminUserEntity.createdAt;
     adminUser.updatedAt = adminUserEntity.updatedAt;
     adminUser.lastLogin = adminUserEntity.lastLogin;
     adminUser.hashRefreshToken = adminUserEntity.hachRefreshToken;

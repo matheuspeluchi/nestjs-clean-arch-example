@@ -2,9 +2,10 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   Post,
   Req,
-  Request,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -19,12 +20,17 @@ import {
 import { AuthLoginDto } from './dto/auth-dto.class';
 import { IsAuthPresenter } from '../../presenters/auth/auth.presenter';
 
-import { JwtAuthGuard } from '../../../infra/common/guards/jwtAuth.guard';
+import { IsAuthenticatedUseCase } from '../../../domain/auth/useCases/isAuthenticated.usecases';
+import { LoginUseCase } from '../../../domain/auth/useCases/login.usecases';
+import { LogoutUseCase } from '../../../domain/auth/useCases/logout.usecases';
+import { Usecase } from '../../../infra/adapters/useCase.interface';
+import { Response } from 'express';
+import { AuthenticatedDTO } from '../../../domain/auth/dto/authenticate.dto';
+import { UserDTO } from '../../../domain/auth/dto/user.dto';
 import JwtRefreshGuard from '../../../infra/common/guards/jwtRefresh.guard';
+import { JwtAuthGuard } from '../../../infra/common/guards/jwtAuth.guard';
 import { ApiResponseType } from '../../../infra/common/swagger/response.decorator';
-import { IsAuthenticatedUseCase } from '../../../domain/useCases/auth/isAuthenticated.usecases';
-import { LoginUseCase } from '../../../domain/useCases/auth/login.usecases';
-import { LogoutUseCase } from '../../../domain/useCases/auth/logout.usecases';
+import { LogoutDTO } from '../../../domain/auth/dto/logout.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -36,37 +42,34 @@ import { LogoutUseCase } from '../../../domain/useCases/auth/logout.usecases';
 @ApiExtraModels(IsAuthPresenter)
 export class AuthController {
   constructor(
-    private readonly loginUsecase: LoginUseCase,
-    private readonly logoutUsecase: LogoutUseCase,
-    private readonly isAuthUsecase: IsAuthenticatedUseCase,
+    @Inject(LoginUseCase)
+    private readonly loginUsecase: Usecase<AuthenticatedDTO>,
+    @Inject(LogoutUseCase)
+    private readonly logoutUsecase: Usecase<LogoutDTO>,
+    @Inject(IsAuthenticatedUseCase)
+    private readonly isAuthUsecase: Usecase<UserDTO>,
   ) {}
 
   @Post('login')
   @ApiBody({ type: AuthLoginDto })
   @ApiOperation({ description: 'login' })
-  async login(@Body() auth: AuthLoginDto, @Request() request: any) {
+  async login(@Body() auth: AuthLoginDto, @Res() response: Response) {
     const { username, password } = auth;
 
-    await this.loginUsecase.authenticate(username, password);
-
-    const accessTokenCookie = await this.loginUsecase.getCookieWithJwtToken(
-      auth.username,
-    );
-    const refreshTokenCookie =
-      await this.loginUsecase.getCookieWithJwtRefreshToken(auth.username);
-    request.res.setHeader('Set-Cookie', [
-      accessTokenCookie,
-      refreshTokenCookie,
-    ]);
-    return 'Login successful';
+    const cookies = await this.loginUsecase.execute(username, password);
+    const { accessTokenCookie, refreshTokenCookie } = cookies;
+    response.cookie('authorization', accessTokenCookie);
+    response.cookie('refresh', refreshTokenCookie);
+    return response.json({ message: 'Login successful' });
   }
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ description: 'logout' })
-  async logout(@Request() request: any) {
-    const cookie = await this.logoutUsecase.execute();
-    request.res.setHeader('Set-Cookie', cookie);
+  async logout(@Res() response: Response): Promise<string> {
+    const cookie: LogoutDTO = await this.logoutUsecase.execute();
+    response.cookie('authorization', cookie.authorization);
+    response.cookie('refresh', cookie.refresh);
     return 'Logout successful';
   }
 
@@ -82,14 +85,14 @@ export class AuthController {
     return response;
   }
 
-  @Get('refresh')
-  @UseGuards(JwtRefreshGuard)
-  @ApiBearerAuth()
-  async refresh(@Req() request: any) {
-    const accessTokenCookie = await this.loginUsecase.getCookieWithJwtToken(
-      request.user.username,
-    );
-    request.res.setHeader('Set-Cookie', accessTokenCookie);
-    return 'Refresh successful';
-  }
+  // @Get('refresh')
+  // @UseGuards(JwtRefreshGuard)
+  // @ApiBearerAuth()
+  // async refresh(@Req() request: any) {
+  //   const accessTokenCookie = await this.loginUsecase.getCookieWithJwtToken(
+  //     request.user.username,
+  //   );
+  //   request.res.setHeader('Set-Cookie', accessTokenCookie);
+  //   return 'Refresh successful';
+  // }
 }
