@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { TodoModel } from '../../todo/models/todo.model';
-import { TodoRepository } from '../../../infra/repositories/todo/todo.repository';
+import { TodoRepository } from '../../interfaces/todo.repository';
 import { TodoDTO } from '../dto/Todo.dto';
-import { Usecase } from '../../../infra/adapters/useCase.interface';
+import { Usecase } from '../../interfaces/useCase.interface';
 @Injectable()
-export class GetTodoUseCases extends Usecase<TodoDTO> {
+export class GetTodoUseCases extends Usecase<number, TodoDTO> {
   constructor(private readonly todoRepository: TodoRepository) {
     super();
   }

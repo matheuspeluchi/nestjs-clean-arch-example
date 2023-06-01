@@ -16,12 +16,14 @@ import { AddTodoUseCases } from '../../../domain/todo/useCases/addTodo.usecase';
 import { ApiResponseType } from '../../../infra/common/swagger/response.decorator';
 import { AddTodoDto } from './dto/addTodo.dto';
 import { TodoPresenter } from '../../presenters/todo/todo.presenter';
-import { UpdateTodoDto } from './dto/updateTodo.dto';
+import { UpdateTodoDTO } from './dto/updateTodo.dto';
 import { JwtAuthGuard } from '../../../infra/common/guards/jwtAuth.guard';
 import { DeleteTodoUseCases } from '../../../domain/todo/useCases/deleteTodo.usecase';
 import { GetTodoUseCases } from '../../../domain/todo/useCases/getTodo.usecase';
 import { ListTodosUseCases } from '../../../domain/todo/useCases/listTodos.usecase';
 import { UpdateTodoUseCases } from '../../../domain/todo/useCases/updateTodo.usecase';
+import { Usecase } from '../../../domain/interfaces/useCase.interface';
+import { TodoDTO } from '../../../domain/todo/dto/Todo.dto';
 
 @Controller('todos')
 @ApiTags('todo')
@@ -29,11 +31,16 @@ import { UpdateTodoUseCases } from '../../../domain/todo/useCases/updateTodo.use
 @ApiExtraModels(TodoPresenter)
 export class TodoController {
   constructor(
-    private readonly getTodoUsecaseProxy: GetTodoUseCases,
-    private readonly listUsecase: ListTodosUseCases,
-    private readonly updateTodoUsecaseProxy: UpdateTodoUseCases,
-    private readonly deleteTodoUsecaseProxy: DeleteTodoUseCases,
-    private readonly addTodoUsecaseProxy: AddTodoUseCases,
+    @Inject(GetTodoUseCases)
+    private readonly getTodoUsecaseProxy: Usecase<number, TodoDTO>,
+    @Inject(ListTodosUseCases)
+    private readonly listUsecase: Usecase<null, TodoDTO[]>,
+    @Inject(UpdateTodoUseCases)
+    private readonly updateTodoUsecaseProxy: Usecase<any, TodoDTO>,
+    @Inject(DeleteTodoUseCases)
+    private readonly deleteTodoUsecaseProxy: Usecase<number, void>,
+    @Inject(AddTodoUseCases)
+    private readonly addTodoUsecaseProxy: Usecase<AddTodoDto, TodoDTO>,
   ) {}
 
   @Get(':id')
@@ -55,7 +62,7 @@ export class TodoController {
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   @ApiResponseType(TodoPresenter, true)
-  async updateTodo(@Body() updateTodoDto: UpdateTodoDto) {
+  async updateTodo(@Body() updateTodoDto: UpdateTodoDTO) {
     const { id, isDone } = updateTodoDto;
     await this.updateTodoUsecaseProxy.execute(id, isDone);
     return 'success';
@@ -72,11 +79,7 @@ export class TodoController {
   @Post()
   @ApiResponseType(TodoPresenter, true)
   async addTodo(@Body() addTodoDto: AddTodoDto) {
-    const { title, description } = addTodoDto;
-    const todoCreated = await this.addTodoUsecaseProxy.execute(
-      title,
-      description,
-    );
+    const todoCreated = await this.addTodoUsecaseProxy.execute(addTodoDto);
     return new TodoPresenter(todoCreated);
   }
 }

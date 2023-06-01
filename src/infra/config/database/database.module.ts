@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EnvironmentConfigModule } from '../environment-config/environment-config.module';
 
 import { DatabaseConfigService } from './databaseConfig.service';
-import { EnvironmentConfig } from '../../adapters/environment.mixin';
+import { EnvironmentConfig } from '../../interfaces/environment.interface';
 
 @Module({
   imports: [

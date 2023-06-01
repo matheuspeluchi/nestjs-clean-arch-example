@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TodoRepository } from '../../../infra/repositories/todo/todo.repository';
+import { TodoRepository } from '../../interfaces/todo.repository';
 import { LoggerService } from '../../../infra/logger/logger.service';
-import { Usecase } from '../../../infra/adapters/useCase.interface';
+import { Usecase } from '../../interfaces/useCase.interface';
 @Injectable()
-export class DeleteTodoUseCases extends Usecase<void> {
+export class DeleteTodoUseCases extends Usecase<number, void> {
   constructor(
     private readonly logger: LoggerService,
     private readonly todoRepository: TodoRepository,

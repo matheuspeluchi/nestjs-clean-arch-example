@@ -1,20 +1,21 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { EncryptionService } from '../../../infra/adapters/encryption.interface';
+import { EncryptionService } from '../../../infra/interfaces/encryption.interface';
 import {
   IJwtServicePayload,
-  AuthService,
-} from '../../../infra/adapters/auth.interface';
-import { UserRepository } from '../../../infra/repositories/user/user.repository';
+  JwtService,
+} from '../../../infra/interfaces/jwt-service.interface';
+import { UserRepository } from '../../interfaces/user.repository';
 import { LoggerService } from '../../../infra/logger/logger.service';
-import { EnvironmentConfig } from '../../../infra/adapters/environment.mixin';
-import { Usecase } from '../../../infra/adapters/useCase.interface';
+import { EnvironmentConfig } from '../../../infra/interfaces/environment.interface';
+import { Usecase } from '../../interfaces/useCase.interface';
 import { AuthenticatedDTO } from '../dto/authenticate.dto';
+import { CredentialsDTO } from '../../../application/controllers/auth/dto/credentials.dto';
 
 @Injectable()
-export class LoginUseCase extends Usecase<AuthenticatedDTO> {
+export class LoginUseCase extends Usecase<CredentialsDTO, AuthenticatedDTO> {
   constructor(
     private readonly logger: LoggerService,
-    private readonly authTokenService: AuthService,
+    private readonly tokenService: JwtService,
     private readonly configService: EnvironmentConfig,
     private readonly userRepository: UserRepository,
     private readonly bcryptService: EncryptionService,
@@ -22,7 +23,8 @@ export class LoginUseCase extends Usecase<AuthenticatedDTO> {
     super();
   }
 
-  async execute(username: string, password: string) {
+  async execute(credentials: CredentialsDTO) {
+    const { username, password } = credentials;
     let isValidUsernameAndPassword = false;
     const user = await this.userRepository.getUserByUsername(username);
     if (user)
@@ -50,7 +52,7 @@ export class LoginUseCase extends Usecase<AuthenticatedDTO> {
     const payload: IJwtServicePayload = { username: username };
     const secret = this.configService.getJwtSecret();
     const expiresIn = this.configService.getJwtExpirationTime() + 's';
-    return this.authTokenService.createToken(payload, secret, expiresIn);
+    return this.tokenService.createToken(payload, secret, expiresIn);
   }
 
   async getCookieWithJwtRefreshToken(username: string) {
@@ -61,7 +63,7 @@ export class LoginUseCase extends Usecase<AuthenticatedDTO> {
     const payload: IJwtServicePayload = { username: username };
     const secret = this.configService.getJwtRefreshSecret();
     const expiresIn = this.configService.getJwtRefreshExpirationTime() + 's';
-    const token = this.authTokenService.createToken(payload, secret, expiresIn);
+    const token = this.tokenService.createToken(payload, secret, expiresIn);
     await this.setCurrentRefreshToken(token, username);
     return token;
   }

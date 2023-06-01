@@ -1,12 +1,12 @@
-import { UserRepository } from '../../../../infra/repositories/user/user.repository';
+import { UserRepository } from '../../../interfaces/user.repository';
 import { BcryptService } from '../../../../infra/services/bcrypt/bcrypt.service';
 import { UserModel } from '../../../user/models/user.model';
 import { IsAuthenticatedUseCase } from '../isAuthenticated.usecases';
 import { LoginUseCase } from '../login.usecases';
 import { LogoutUseCase } from '../logout.usecases';
 import { LoggerService } from '../../../../infra/logger/logger.service';
-import { AuthService } from '../../../../infra/adapters/auth.interface';
-import { EnvironmentConfig } from '../../../../infra/adapters/environment.mixin';
+import { AuthService } from '../../../../infra/interfaces/jwt-service.interface';
+import { EnvironmentConfig } from '../../../../infra/interfaces/environment.interface';
 
 describe('uses_cases/authentication', () => {
   let loginUseCases: LoginUseCase;

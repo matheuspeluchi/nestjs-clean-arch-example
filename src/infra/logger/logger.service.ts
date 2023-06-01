@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ILogger } from './logger.interface';
+import { ILogger } from '../interfaces/logger.interface';
 
 @Injectable()
 export class LoggerService extends Logger implements ILogger {

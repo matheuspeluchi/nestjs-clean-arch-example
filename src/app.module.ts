@@ -4,11 +4,11 @@ import { LoggerModule } from './infra/logger/logger.module';
 import { ExceptionsModule } from './infra/exceptions/exceptions.module';
 import { BcryptModule } from './infra/services/bcrypt/bcrypt.module';
 import { ControllersModule } from './application/controllers/controllers.module';
-import { AuthModule } from './infra/services/auth/auth.module';
+import { TokenModule } from './infra/services/token/token.module';
 
 @Module({
   imports: [
-    AuthModule,
+    TokenModule,
     LoggerModule,
     ExceptionsModule,
     ControllersModule,

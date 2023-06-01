@@ -1,4 +1,4 @@
-import { Usecase } from '../../../infra/adapters/useCase.interface';
+import { Usecase } from '../../interfaces/useCase.interface';
 import { LogoutDTO } from '../dto/logout.dto';
 
 export class LogoutUseCase extends Usecase<LogoutDTO> {
