@@ -52,7 +52,7 @@ export class TodoController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @ApiResponseType(TodoPresenter, true)
   async getTodos() {
     const todos = await this.listUsecase.execute();

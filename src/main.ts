@@ -13,7 +13,7 @@ import {
 
 async function bootstrap() {
   const env = process.env.NODE_ENV;
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: { origin: '*' } });
 
   app.use(cookieParser());
   app.useGlobalFilters(new AllExceptionFilter(new LoggerService()));

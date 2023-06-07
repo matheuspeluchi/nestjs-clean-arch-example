@@ -22,9 +22,10 @@ export class DatabaseTodoRepository extends TodoRepository {
       { isDone: isDone },
     );
   }
-  async insert(todo: TodoModel): Promise<void> {
+  async insert(todo: TodoModel): Promise<TodoModel> {
     const todoEntity = this.toTodoEntity(todo);
-    await this.todoEntityRepository.insert(todoEntity);
+    const savedTodo = await this.todoEntityRepository.save(todoEntity);
+    return this.toTodo(savedTodo);
   }
   async findAll(): Promise<TodoModel[]> {
     const todosEntity = await this.todoEntityRepository.find();
@@ -60,6 +61,8 @@ export class DatabaseTodoRepository extends TodoRepository {
     todoEntity.title = todo.title;
     todoEntity.description = todo.description;
     todoEntity.isDone = todo.isDone;
+    todoEntity.createdAt = todo.createdAt;
+    todoEntity.updatedAt = todo.updatedAt;
 
     return todoEntity;
   }

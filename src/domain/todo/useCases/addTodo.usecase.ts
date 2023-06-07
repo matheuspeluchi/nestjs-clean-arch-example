@@ -22,8 +22,8 @@ export class AddTodoUseCases extends Usecase<AddTodoDto, TodoDTO> {
     todo.description = description;
     todo.isDone = false;
     todo.createdAt = new Date();
-    await this.todoRepository.insert(todo);
+    const newTodo = await this.todoRepository.insert(todo);
     this.logger.log('addTodoUseCases execute', 'New todo have been inserted');
-    return new TodoDTO(todo);
+    return new TodoDTO(newTodo);
   }
 }
