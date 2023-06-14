@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/1f4e416d-0d51-4a87-b3e9-433402ba97d4/resourceGroups/nestjsTestApp_group/providers/Microsoft.Web/sites/nestjsTestApp",
+  "appService.deploySubpath": "."
+}

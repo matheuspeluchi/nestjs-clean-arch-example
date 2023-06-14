@@ -16,9 +16,9 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
       database: this.configService.getDatabaseName(),
       entities: ['dist/**/*.entity.{ts,js}'],
       synchronize: false,
-      // ssl: {
-      //   rejectUnauthorized: false,
-      // },
+      ssl: {
+        rejectUnauthorized: false,
+      },
     };
   }
 }
